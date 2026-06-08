@@ -2,9 +2,18 @@ import axios from "axios"
 
 const trimTrailingSlash = (value) => value.replace(/\/+$/, "")
 
-export const API_BASE_URL = trimTrailingSlash(
-  import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:3000/api" : "/api")
-)
+// Use VITE_API_URL consistently and ensure it ends with /api if set.
+// If VITE_API_URL is not set, fallback to relative path /api.
+const getApiBaseUrl = () => {
+  const url = import.meta.env.VITE_API_URL
+  if (url) {
+    const trimmed = trimTrailingSlash(url)
+    return trimmed.endsWith("/api") ? trimmed : `${trimmed}/api`
+  }
+  return "/api"
+}
+
+export const API_BASE_URL = getApiBaseUrl()
 
 export const buildApiUrl = (path = "") => {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`

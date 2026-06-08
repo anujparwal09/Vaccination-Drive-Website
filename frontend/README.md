@@ -13,12 +13,16 @@ npm run preview
 
 ## Environment
 
-For local development, the frontend defaults to `http://localhost:3000/api`.
+Create a `.env.development` or `.env.local` file in the `frontend` folder:
+
+```env
+VITE_API_URL=http://localhost:3000
+```
 
 For Vercel deployment, set:
 
 ```env
-VITE_API_URL=https://your-render-service.onrender.com/api
+VITE_API_URL=https://your-render-service.onrender.com
 ```
 
 ## Deployment

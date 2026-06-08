@@ -133,7 +133,7 @@ export const AuthProvider = ({ children }) => {
   // Google OAuth redirect trigger
   const loginWithGoogle = () => {
     // Redirect browser directly to backend oauth initialization url
-    window.location.href = buildApiUrl("/auth/google")
+    window.location.href = `${import.meta.env.VITE_API_URL}/api/auth/google`
   }
 
   // Handle Google OAuth callback exchange code for token
