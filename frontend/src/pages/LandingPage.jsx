@@ -226,7 +226,7 @@ export const LandingPage = () => {
                 </div>
               </div>
             </div>
-            <div className="relative h-[400px] lg:h-[500px] w-full rounded-3xl overflow-hidden shadow-premium group">
+            <div className="relative h-[250px] sm:h-[400px] lg:h-[500px] w-full rounded-3xl overflow-hidden shadow-premium group">
               {CAROUSEL_IMAGES.map((src, idx) => (
                 <img 
                   key={idx}
@@ -299,7 +299,7 @@ export const LandingPage = () => {
       <section id="vaccines" className="py-20 bg-white dark:bg-slate-900 border-y border-border">
         <div className="container max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <div className="relative h-[400px] w-full rounded-3xl overflow-hidden shadow-premium bg-[#DED6D8]">
+            <div className="relative h-[250px] sm:h-[400px] w-full rounded-3xl overflow-hidden shadow-premium bg-[#DED6D8]">
               <img src="https://www.news-medical.net/image-handler/picture/2020/7/shutterstock_616263095.jpg" alt="Vaccine vial" className="object-cover h-full w-full" />
             </div>
             <div className="space-y-8">

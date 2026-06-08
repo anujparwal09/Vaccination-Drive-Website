@@ -28,15 +28,16 @@ export const Navbar = () => {
       <div className="container flex h-16 max-w-7xl mx-auto items-center justify-between px-4 sm:px-6">
         
         {/* Brand Logo */}
-        <Link to="/" className="flex flex-row items-center space-x-3">
+        <Link to="/" className="flex flex-row items-center space-x-3 max-w-[70%] sm:max-w-none">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-white shadow-sm overflow-hidden border border-border/50">
             <img src="/assets/logo_round.jpg" alt="Rotaract Logo" className="h-full w-full object-cover" />
           </div>
           <div className="flex flex-col text-left">
-            <span className="font-extrabold text-[1.1rem] sm:text-[1.3rem] leading-tight text-slate-900 dark:text-white tracking-tight">
-              Rotaract Club of Osmania Medical College
+            <span className="font-extrabold text-[1rem] sm:text-[1.3rem] leading-tight text-slate-900 dark:text-white tracking-tight truncate sm:whitespace-normal">
+              <span className="sm:hidden">Rotaract OMC</span>
+              <span className="hidden sm:inline">Rotaract Club of Osmania Medical College</span>
             </span>
-            <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-[#114B3A] dark:text-[#38a169] uppercase mt-0.5">
+            <span className="text-[8px] sm:text-xs font-bold tracking-[0.15em] sm:tracking-[0.2em] text-[#114B3A] dark:text-[#38a169] uppercase mt-0.5 whitespace-nowrap">
               HBV · HPV VACCINATION DRIVE
             </span>
           </div>

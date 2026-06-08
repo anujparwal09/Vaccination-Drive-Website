@@ -43,12 +43,12 @@ export const ReceiptPage = () => {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950/20 py-12 px-4 sm:px-6">
       
       {/* Action panel (Hidden on printing) */}
-      <div className="max-w-3xl mx-auto flex justify-between items-center mb-6 no-print">
+      <div className="max-w-3xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 no-print w-full">
         <Button
           variant="outline"
           size="sm"
           onClick={() => navigate("/dashboard")}
-          className="gap-1.5 border-border/80"
+          className="gap-1.5 border-border/80 w-full sm:w-auto"
         >
           <ArrowLeft className="h-4 w-4" /> Back to Dashboard
         </Button>
@@ -56,7 +56,7 @@ export const ReceiptPage = () => {
           variant="primary"
           size="sm"
           onClick={() => window.open(receiptHref, "_blank", "noopener,noreferrer")}
-          className="gap-1.5 bg-secondary hover:bg-secondary-hover"
+          className="gap-1.5 bg-secondary hover:bg-secondary-hover w-full sm:w-auto"
         >
           <Printer className="h-4 w-4" /> Download PDF Receipt
         </Button>

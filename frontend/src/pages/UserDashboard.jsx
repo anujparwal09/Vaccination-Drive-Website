@@ -280,12 +280,11 @@ export const UserDashboard = () => {
               className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
             />
             
-            {/* Wallet Pass modal */}
             <motion.div
               initial={{ scale: 0.9, y: 50, opacity: 0 }}
               animate={{ scale: 1, y: 0, opacity: 1 }}
               exit={{ scale: 0.9, y: 50, opacity: 0 }}
-              className="relative w-full max-w-sm rounded-3xl overflow-hidden bg-slate-950 text-white shadow-2xl border border-slate-800 flex flex-col justify-between"
+              className="relative w-full max-w-sm max-h-[90vh] overflow-y-auto rounded-3xl bg-slate-950 text-white shadow-2xl border border-slate-800 flex flex-col justify-between"
             >
               {/* Top Bar Logo */}
               <div className="p-5 bg-slate-900 border-b border-slate-800 flex justify-between items-center">

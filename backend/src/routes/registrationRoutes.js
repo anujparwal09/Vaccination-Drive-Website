@@ -5,8 +5,8 @@ const { readJsonFile, writeJsonFile } = require("../utils/jsonDb");
 const router = express.Router();
 
 const VACCINES = [
-  { id: "ceravac-hpv", name: "ceravac-HPV", price: 1300 },
-  { id: "revac-b-hbv", name: "Revac-B+ -HBV vaccine", price: 75 }
+  { id: "ceravac-hpv", name: "ceravac-HPV", price: 1800 },
+  { id: "revac-b-hbv", name: "Revac-B+ -HBV vaccine", price: 400 }
 ];
 
 function normalizeRegistration(record) {

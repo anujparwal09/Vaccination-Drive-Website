@@ -164,33 +164,35 @@ export const AdminDashboard = () => {
     <div className="container max-w-7xl mx-auto px-4 py-8 sm:px-6 min-h-[calc(100vh-4rem)] flex flex-col lg:flex-row gap-8 text-left">
       
       {/* Sidebar Navigation */}
-      <aside className="w-full lg:w-64 shrink-0 flex flex-col gap-2 border-b lg:border-b-0 lg:border-r border-border/60 pb-6 lg:pb-0 lg:pr-6">
-        <div className="px-3 py-2 mb-4">
+      <aside className="w-full lg:w-64 shrink-0 flex flex-col border-b lg:border-b-0 lg:border-r border-border/60 pb-6 lg:pb-0 lg:pr-6">
+        <div className="px-3 py-2 mb-4 hidden lg:block text-left">
           <Badge variant="primary" className="mb-2">Admin Mode</Badge>
           <h2 className="font-extrabold text-lg tracking-tight">Console Manager</h2>
           <p className="text-xs text-muted-foreground mt-0.5">Control panel for vaccine drives</p>
         </div>
 
-        {[
-          { id: "dashboard", label: "Overview Panel", icon: <ShieldCheck className="h-4.5 w-4.5" /> },
-          { id: "users", label: "User Management", icon: <Users className="h-4.5 w-4.5" /> },
-          { id: "registrations", label: "Payments Queue", icon: <DollarSign className="h-4.5 w-4.5" /> },
-          { id: "user-data", label: "User Data", icon: <Search className="h-4.5 w-4.5" /> },
-          { id: "settings", label: "Drive Settings", icon: <Settings className="h-4.5 w-4.5" /> }
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-3 px-4 py-2.5 text-sm font-semibold rounded-xl transition-all ${
-              activeTab === tab.id
-                ? "bg-primary text-white shadow-glow"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground"
-            }`}
-          >
-            {tab.icon}
-            <span>{tab.label}</span>
-          </button>
-        ))}
+        <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-x-visible pb-3 lg:pb-0 no-scrollbar whitespace-nowrap">
+          {[
+            { id: "dashboard", label: "Overview Panel", icon: <ShieldCheck className="h-4.5 w-4.5" /> },
+            { id: "users", label: "User Management", icon: <Users className="h-4.5 w-4.5" /> },
+            { id: "registrations", label: "Payments Queue", icon: <DollarSign className="h-4.5 w-4.5" /> },
+            { id: "user-data", label: "User Data", icon: <Search className="h-4.5 w-4.5" /> },
+            { id: "settings", label: "Drive Settings", icon: <Settings className="h-4.5 w-4.5" /> }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-3 px-4 py-2.5 text-sm font-semibold rounded-xl transition-all shrink-0 ${
+                activeTab === tab.id
+                  ? "bg-primary text-white shadow-glow"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              {tab.icon}
+              <span>{tab.label}</span>
+            </button>
+          ))}
+        </div>
       </aside>
 
       {/* Main Panel Content */}
@@ -377,10 +379,10 @@ export const AdminDashboard = () => {
                 <table className="w-full text-sm">
                   <thead className="bg-slate-50 dark:bg-slate-900/40 border-b">
                     <tr>
-                      <th className="px-6 py-3 text-left font-bold text-xs uppercase tracking-wider text-slate-500">Participant</th>
-                      <th className="px-6 py-3 text-left font-bold text-xs uppercase tracking-wider text-slate-500">Contact Details</th>
-                      <th className="px-6 py-3 text-center font-bold text-xs uppercase tracking-wider text-slate-500">Role</th>
-                      <th className="px-6 py-3 text-right font-bold text-xs uppercase tracking-wider text-slate-500">Actions</th>
+                      <th className="px-6 py-3 text-left font-bold text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">Participant</th>
+                      <th className="px-6 py-3 text-left font-bold text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">Contact Details</th>
+                      <th className="px-6 py-3 text-center font-bold text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">Role</th>
+                      <th className="px-6 py-3 text-right font-bold text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/40">
@@ -391,23 +393,23 @@ export const AdminDashboard = () => {
                       })
                       .map((u) => (
                         <tr key={u.id}>
-                          <td className="px-6 py-4 flex items-center gap-3">
+                          <td className="px-6 py-4 flex items-center gap-3 whitespace-nowrap">
                             <img src={u.avatar} alt="Avatar" className="h-9 w-9 rounded-full bg-slate-100" />
                             <div>
                               <div className="font-bold text-slate-900 dark:text-white">{u.fullName}</div>
                               <span className="text-[10px] text-muted-foreground font-semibold">ID: {u.id}</span>
                             </div>
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-xs text-slate-800 dark:text-slate-200">{u.email}</div>
                             <div className="text-[10px] text-slate-500 font-medium">{u.phone}</div>
                           </td>
-                          <td className="px-6 py-4 text-center">
+                          <td className="px-6 py-4 text-center whitespace-nowrap">
                             <Badge variant={u.role === "admin" ? "success" : "outline"}>
                               {u.role}
                             </Badge>
                           </td>
-                          <td className="px-6 py-4 text-right">
+                          <td className="px-6 py-4 text-right whitespace-nowrap">
                             <div className="flex justify-end gap-1.5">
                               <Button
                                 variant="outline"
@@ -475,12 +477,12 @@ export const AdminDashboard = () => {
                 <table className="w-full text-sm">
                   <thead className="bg-slate-50 dark:bg-slate-900/40 border-b">
                     <tr>
-                      <th className="px-6 py-3 text-left font-bold text-xs uppercase tracking-wider text-slate-500">Registration</th>
-                      <th className="px-6 py-3 text-left font-bold text-xs uppercase tracking-wider text-slate-500">Participant</th>
-                      <th className="px-6 py-3 text-left font-bold text-xs uppercase tracking-wider text-slate-500">Vaccine</th>
-                      <th className="px-6 py-3 text-center font-bold text-xs uppercase tracking-wider text-slate-500">Payment</th>
-                      <th className="px-6 py-3 text-center font-bold text-xs uppercase tracking-wider text-slate-500">Transaction Status</th>
-                      <th className="px-6 py-3 text-right font-bold text-xs uppercase tracking-wider text-slate-500">Approval</th>
+                      <th className="px-6 py-3 text-left font-bold text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">Registration</th>
+                      <th className="px-6 py-3 text-left font-bold text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">Participant</th>
+                      <th className="px-6 py-3 text-left font-bold text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">Vaccine</th>
+                      <th className="px-6 py-3 text-center font-bold text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">Payment</th>
+                      <th className="px-6 py-3 text-center font-bold text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">Transaction Status</th>
+                      <th className="px-6 py-3 text-right font-bold text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">Approval</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/40">
@@ -500,42 +502,42 @@ export const AdminDashboard = () => {
                       })
                       .map((r) => (
                         <tr key={r.id}>
-                          <td className="px-6 py-4">
+                          <td className="px-6 py-4 whitespace-nowrap">
                             <div className="font-bold text-slate-900 dark:text-white">{r.id}</div>
                             <span className="text-[10px] text-muted-foreground font-semibold">
                               {new Date(r.createdAt).toLocaleDateString("en-IN")}
                             </span>
                           </td>
-                          <td className="px-6 py-4 text-left">
+                          <td className="px-6 py-4 text-left whitespace-nowrap">
                             <div className="font-semibold text-slate-800 dark:text-slate-200">{r.fullName}</div>
                             <div className="text-[10px] text-slate-400 font-medium">{r.phone} | Age: {r.age}</div>
                           </td>
-                          <td className="px-6 py-4 text-left">
+                          <td className="px-6 py-4 text-left whitespace-nowrap">
                             <div className="font-semibold text-slate-800 dark:text-slate-200">{r.vaccineName}</div>
                             <div className="text-[10px] text-slate-400 font-medium">{r.dose} | {r.appointmentDate || "No date"}</div>
                           </td>
-                          <td className="px-6 py-4 text-center">
+                          <td className="px-6 py-4 text-center whitespace-nowrap">
                             <div className="font-bold text-slate-900 dark:text-white">Rs. {Number(r.paymentAmount || 0).toLocaleString("en-IN")}</div>
                             <div className="mx-auto mt-1 max-w-[130px] truncate text-[10px] text-slate-400 font-medium">
                               {r.paymentId || "Payment not done"}
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-center">
+                          <td className="px-6 py-4 text-center whitespace-nowrap">
                             <Badge
                               variant={getTransactionVariant(r)}
-                              className="text-[9px] py-0"
+                              className="text-[9px] py-0 whitespace-nowrap"
                             >
                               {getTransactionStatus(r)}
                             </Badge>
                           </td>
-                          <td className="px-6 py-4 text-right">
+                          <td className="px-6 py-4 text-right whitespace-nowrap">
                             {r.paymentStatus === "Pending Admin Approval" || r.paymentStatus === "Pending Admin Confirmation" ? (
-                              <div className="flex justify-end gap-1.5">
+                              <div className="flex justify-end gap-1.5 whitespace-nowrap">
                                 <Button
                                   variant="primary"
                                   size="sm"
                                   onClick={() => handleApprovePayment(r.id)}
-                                  className="h-8 rounded-lg text-xs bg-success hover:bg-success/90"
+                                  className="h-8 rounded-lg text-xs bg-success hover:bg-success/90 whitespace-nowrap"
                                 >
                                   Approve
                                 </Button>
@@ -543,21 +545,21 @@ export const AdminDashboard = () => {
                                   variant="outline"
                                   size="sm"
                                   onClick={() => handleRejectPayment(r.id)}
-                                  className="h-8 rounded-lg text-xs border-border/80 text-error"
+                                  className="h-8 rounded-lg text-xs border-border/80 text-error whitespace-nowrap"
                                 >
                                   Not Approve
                                 </Button>
                               </div>
                             ) : r.paymentStatus === "Confirmed" ? (
-                              <span className="text-xs font-semibold text-success flex items-center justify-end gap-1.5">
+                              <span className="text-xs font-semibold text-success flex items-center justify-end gap-1.5 whitespace-nowrap">
                                 <CheckCircle2 className="h-4 w-4" /> Approved
                               </span>
                             ) : r.paymentStatus === "Not Approved" ? (
-                              <span className="text-xs font-semibold text-error flex items-center justify-end gap-1.5">
+                              <span className="text-xs font-semibold text-error flex items-center justify-end gap-1.5 whitespace-nowrap">
                                 <AlertTriangle className="h-4 w-4" /> Not Approved
                               </span>
                             ) : (
-                              <span className="text-xs font-semibold text-muted-foreground flex items-center justify-end gap-1.5">
+                              <span className="text-xs font-semibold text-muted-foreground flex items-center justify-end gap-1.5 whitespace-nowrap">
                                 <Clock className="h-4 w-4" /> Awaiting Payment
                               </span>
                             )}
@@ -671,29 +673,29 @@ export const AdminDashboard = () => {
                             <table className="w-full text-sm">
                               <thead className="bg-slate-50 dark:bg-slate-900/40 border-b">
                                 <tr>
-                                  <th className="px-5 py-3 text-left text-xs uppercase tracking-wider text-slate-500">Registration</th>
-                                  <th className="px-5 py-3 text-left text-xs uppercase tracking-wider text-slate-500">Vaccine</th>
-                                  <th className="px-5 py-3 text-center text-xs uppercase tracking-wider text-slate-500">Transaction</th>
-                                  <th className="px-5 py-3 text-center text-xs uppercase tracking-wider text-slate-500">Approval</th>
+                                  <th className="px-5 py-3 text-left text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">Registration</th>
+                                  <th className="px-5 py-3 text-left text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">Vaccine</th>
+                                  <th className="px-5 py-3 text-center text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">Transaction</th>
+                                  <th className="px-5 py-3 text-center text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">Approval</th>
                                 </tr>
                               </thead>
                               <tbody className="divide-y divide-border/40">
                                 {userHistory.map((item) => (
                                   <tr key={item.id}>
-                                    <td className="px-5 py-4">
+                                    <td className="px-5 py-4 whitespace-nowrap">
                                       <div className="font-bold text-slate-900 dark:text-white">{item.id}</div>
                                       <div className="text-[10px] text-muted-foreground">{item.appointmentDate || "No appointment date"}</div>
                                     </td>
-                                    <td className="px-5 py-4">
+                                    <td className="px-5 py-4 whitespace-nowrap">
                                       <div className="font-semibold">{item.vaccineName}</div>
                                       <div className="text-[10px] text-muted-foreground">{item.dose}</div>
                                     </td>
-                                    <td className="px-5 py-4 text-center">
-                                      <Badge variant={getTransactionVariant(item)}>{getTransactionStatus(item)}</Badge>
+                                    <td className="px-5 py-4 text-center whitespace-nowrap">
+                                      <Badge variant={getTransactionVariant(item)} className="whitespace-nowrap">{getTransactionStatus(item)}</Badge>
                                       <div className="text-[10px] text-muted-foreground mt-1 truncate max-w-[150px] mx-auto">{item.paymentId || "No transaction"}</div>
                                     </td>
-                                    <td className="px-5 py-4 text-center">
-                                      <Badge variant={item.paymentStatus === "Confirmed" ? "success" : item.paymentStatus === "Not Approved" ? "error" : "warning"}>
+                                    <td className="px-5 py-4 text-center whitespace-nowrap">
+                                      <Badge variant={item.paymentStatus === "Confirmed" ? "success" : item.paymentStatus === "Not Approved" ? "error" : "warning"} className="whitespace-nowrap">
                                         {item.paymentStatus}
                                       </Badge>
                                     </td>

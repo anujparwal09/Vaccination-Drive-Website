@@ -139,7 +139,7 @@ export const LoginPage = () => {
       </div>
 
       {/* Form Column (Right) */}
-      <div className="col-span-1 lg:col-span-6 flex items-center justify-center p-6 sm:p-12 bg-slate-50 dark:bg-slate-950/20">
+      <div className="col-span-1 lg:col-span-6 flex flex-col items-center justify-center p-6 sm:p-12 bg-slate-50 dark:bg-slate-950/20 overflow-y-auto">
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}

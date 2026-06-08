@@ -331,9 +331,9 @@ export const VaccinationRegistrationPage = () => {
                           }`}
                         >
                           <div>
-                            <div className="flex justify-between items-center mb-2">
-                              <h4 className="font-bold text-base text-slate-900 dark:text-white">{v.name}</h4>
-                              <Badge variant={formData.vaccineId === v.id ? "primary" : "outline"}>
+                            <div className="flex justify-between items-center mb-2 gap-2">
+                              <h4 className="font-bold text-base text-slate-900 dark:text-white pr-2 truncate">{v.name}</h4>
+                              <Badge variant={formData.vaccineId === v.id ? "primary" : "outline"} className="shrink-0">
                                 {v.doses} Doses
                               </Badge>
                             </div>
