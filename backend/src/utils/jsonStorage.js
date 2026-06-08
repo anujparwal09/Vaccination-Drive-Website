@@ -51,7 +51,7 @@ const parseJsonArray = (raw, fileName) => {
 
 const atomicWriteRaw = async (targetPath, data) => {
   await ensureDataDir();
-  const tmpPath = `${targetPath}.${process.pid}.${Date.now()}.tmp`;
+  const tmpPath = `${targetPath}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 8)}.tmp`;
   const json = `${JSON.stringify(data, null, 2)}\n`;
   let handle;
 

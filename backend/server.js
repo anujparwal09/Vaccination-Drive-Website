@@ -24,8 +24,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 
-// Initialize JSON files
-initDbFiles();
+// Initialize App and JSON files later
 
 // Seed Default Admin User if not exists
 const seedAdmin = async () => {
@@ -68,7 +67,12 @@ const seedAdmin = async () => {
     console.error("Admin seed error:", err.message);
   }
 };
-seedAdmin();
+// Initialize App
+const initApp = async () => {
+  await initDbFiles();
+  await seedAdmin();
+};
+initApp();
 
 app.get("/.well-known/appspecific/com.chrome.devtools.json", (req, res) => {
   res.json({});
