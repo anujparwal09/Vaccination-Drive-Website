@@ -314,14 +314,14 @@ export const LandingPage = () => {
                 <div className="pl-4 border-l-4 border-primary">
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Hepatitis B Vaccine (HBV)</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    Protects against the Hepatitis B virus that can cause chronic liver disease. Available as a single booster (₹400) or full 3-dose course (₹1,050).
+                    Protects against the Hepatitis B virus that can cause chronic liver disease. Available as a single booster (₹75).
                   </p>
                 </div>
                 
                 <div className="pl-4 border-l-4 border-[#F59E0B]">
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">HPV Vaccine</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    Recommended for adolescents and young adults to prevent HPV-linked cancers. Single dose (₹1,800) or full 2-dose course (₹3,400).
+                    Recommended for adolescents and young adults to prevent HPV-linked cancers. Single dose (₹1,300).
                   </p>
                 </div>
               </div>
