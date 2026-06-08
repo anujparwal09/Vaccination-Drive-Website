@@ -40,6 +40,7 @@ export const VaccinationRegistrationPage = () => {
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({})
+  const [selectedIds, setSelectedIds] = useState(["ceravac-hpv"])
   
   // Booking Form State
   const [formData, setFormData] = useState({
@@ -69,6 +70,20 @@ export const VaccinationRegistrationPage = () => {
     }
   }, [vaccines, formData.vaccineId])
 
+  useEffect(() => {
+    let targetId = "";
+    if (selectedIds.includes("ceravac-hpv") && selectedIds.includes("revac-b-hbv")) {
+      targetId = "both";
+    } else if (selectedIds.includes("ceravac-hpv")) {
+      targetId = "ceravac-hpv";
+    } else if (selectedIds.includes("revac-b-hbv")) {
+      targetId = "revac-b-hbv";
+    } else {
+      targetId = "ceravac-hpv";
+    }
+    setFormData((prev) => ({ ...prev, vaccineId: targetId }));
+  }, [selectedIds]);
+
   if (!currentUser) {
     return null
   }
@@ -83,6 +98,19 @@ export const VaccinationRegistrationPage = () => {
     }
   }
 
+  const handleVaccineToggle = (id) => {
+    setSelectedIds((prev) => {
+      if (prev.includes(id)) {
+        if (prev.length > 1) {
+          return prev.filter((x) => x !== id)
+        }
+        return prev
+      } else {
+        return [...prev, id]
+      }
+    })
+  }
+
   const validateStep = (currentStep) => {
     const stepErrors = {}
     if (currentStep === 1) {
@@ -90,8 +118,6 @@ export const VaccinationRegistrationPage = () => {
       if (!formData.phone) stepErrors.phone = "Phone number is required."
       if (!formData.age) stepErrors.age = "Age is required."
       // Address validation removed
-    } else if (currentStep === 3) {
-      if (!formData.appointmentDate) stepErrors.appointmentDate = "Please pick a booking date."
     }
     setErrors(stepErrors)
     return Object.keys(stepErrors).length === 0
@@ -211,9 +237,9 @@ export const VaccinationRegistrationPage = () => {
       </div>
 
       {/* Booking Timeline */}
-      {step < 5 && (
+      {step < 4 && (
         <div className="mb-10 max-w-2xl mx-auto flex items-center justify-between px-2">
-          {[1, 2, 3, 4].map((s) => (
+          {[1, 2, 3].map((s) => (
             <Fragment key={s}>
               <div className="flex flex-col items-center">
                 <div
@@ -226,10 +252,10 @@ export const VaccinationRegistrationPage = () => {
                   {step > s ? <CheckCircle2 className="h-4.5 w-4.5" /> : s}
                 </div>
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mt-1.5 hidden sm:inline">
-                  {s === 1 ? "Details" : s === 2 ? "Vaccine" : s === 3 ? "Schedule" : "Payment"}
+                  {s === 1 ? "Details" : s === 2 ? "Vaccine" : "Payment"}
                 </span>
               </div>
-              {s < 4 && (
+              {s < 3 && (
                 <div
                   className={`flex-1 h-0.5 mx-2 -mt-4 sm:-mt-0 transition-all ${
                     step > s ? "bg-primary" : "bg-border/60 dark:bg-border/10"
@@ -320,32 +346,35 @@ export const VaccinationRegistrationPage = () => {
                     </h3>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {vaccines.map((v) => (
-                        <div
-                          key={v.id}
-                          onClick={() => handleInputChange("vaccineId", v.id)}
-                          className={`p-5 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between h-40 bg-card hover:border-primary/60 ${
-                            formData.vaccineId === v.id
-                              ? "border-primary bg-primary/5 dark:bg-primary/10 shadow-glow"
-                              : "border-border"
-                          }`}
-                        >
-                          <div>
-                            <div className="flex justify-between items-center mb-2 gap-2">
-                              <h4 className="font-bold text-base text-slate-900 dark:text-white pr-2 truncate">{v.name}</h4>
-                              <Badge variant={formData.vaccineId === v.id ? "primary" : "outline"} className="shrink-0">
-                                {v.doses} Doses
-                              </Badge>
+                      {vaccines.filter((v) => v.id !== "both").map((v) => {
+                        const isSelected = selectedIds.includes(v.id);
+                        return (
+                          <div
+                            key={v.id}
+                            onClick={() => handleVaccineToggle(v.id)}
+                            className={`p-5 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between h-40 bg-card hover:border-primary/60 ${
+                              isSelected
+                                ? "border-primary bg-primary/5 dark:bg-primary/10 shadow-glow"
+                                : "border-border"
+                            }`}
+                          >
+                            <div>
+                              <div className="flex justify-between items-center mb-2 gap-2">
+                                <h4 className="font-bold text-base text-slate-900 dark:text-white pr-2 truncate">{v.name}</h4>
+                                <Badge variant={isSelected ? "primary" : "outline"} className="shrink-0">
+                                  {v.doses} Doses
+                                </Badge>
+                              </div>
+                              <p className="text-xs text-muted-foreground leading-normal">
+                                Fully approved vaccine for active immunization drives.
+                              </p>
                             </div>
-                            <p className="text-xs text-muted-foreground leading-normal">
-                              Fully approved vaccine for active immunization drives.
-                            </p>
+                            <div className="text-lg font-extrabold text-slate-900 dark:text-white pt-2 border-t border-border/10">
+                              ₹{v.price.toLocaleString("en-IN")}
+                            </div>
                           </div>
-                          <div className="text-lg font-extrabold text-slate-900 dark:text-white pt-2 border-t border-border/10">
-                            ₹{v.price.toLocaleString("en-IN")}
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
 
                     <div className="space-y-2">
@@ -374,7 +403,7 @@ export const VaccinationRegistrationPage = () => {
                         Back
                       </Button>
                       <Button variant="primary" onClick={handleNext} className="gap-2 px-6">
-                        Next: Pick Slot <ChevronRight className="h-4.5 w-4.5" />
+                        Next: Payment <ChevronRight className="h-4.5 w-4.5" />
                       </Button>
                     </div>
                   </motion.div>
@@ -383,68 +412,6 @@ export const VaccinationRegistrationPage = () => {
                 {step === 3 && (
                   <motion.div
                     key="step3"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="space-y-6 text-left"
-                  >
-                    <h3 className="font-bold text-lg text-slate-900 dark:text-white border-b pb-2">
-                      Schedule Camp Slot
-                    </h3>
-
-                    <div className="space-y-4">
-                      <Input
-                        label="Appointment Date"
-                        type="date"
-                        min={new Date().toLocaleDateString('en-CA')}
-                        value={formData.appointmentDate}
-                        onChange={(e) => handleInputChange("appointmentDate", e.target.value)}
-                        error={errors.appointmentDate}
-                      />
-
-                      <div className="space-y-2">
-                        <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                          Available Time Slots
-                        </label>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          {[
-                            "09:00 AM - 11:00 AM",
-                            "11:00 AM - 01:00 PM",
-                            "02:00 PM - 04:00 PM",
-                            "04:00 PM - 06:00 PM",
-                          ].map((slot) => (
-                            <button
-                              key={slot}
-                              type="button"
-                              onClick={() => handleInputChange("appointmentSlot", slot)}
-                              className={`h-12 px-4 rounded-xl border text-sm font-medium transition-all text-left flex items-center justify-between ${
-                                formData.appointmentSlot === slot
-                                  ? "bg-primary border-primary text-white shadow-glow"
-                                  : "bg-card border-border hover:bg-muted text-foreground"
-                              }`}
-                            >
-                              <span>{slot}</span>
-                              <Calendar className="h-4 w-4 opacity-60" />
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-between pt-4 border-t border-border/30">
-                      <Button variant="outline" onClick={handleBack}>
-                        Back
-                      </Button>
-                      <Button variant="primary" onClick={handleNext} className="gap-2 px-6">
-                        Next: Payment <ChevronRight className="h-4.5 w-4.5" />
-                      </Button>
-                    </div>
-                  </motion.div>
-                )}
-
-                {step === 4 && (
-                  <motion.div
-                    key="step4"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
@@ -482,22 +449,39 @@ export const VaccinationRegistrationPage = () => {
           </Card>
         </div>
 
-        {step >= 2 && step < 5 && (
+        {step >= 2 && step < 4 && (
           <div className="lg:col-span-4">
             <Card glass className="border border-border/80 p-5 space-y-5 text-left shadow-premium">
               <div>
                 <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">Vaccine Booking</h4>
                 <div className="text-lg font-bold text-slate-900 dark:text-white">{selectedVaccine?.name}</div>
-                <div className="text-xs text-muted-foreground mt-0.5">{formData.dose} appointment</div>
+                <div className="text-xs text-muted-foreground mt-0.5">
+                  {formData.vaccineId === "both"
+                    ? `${formData.dose} for both HPV and HBV`
+                    : `${formData.dose} appointment`}
+                </div>
               </div>
 
               <div className="border-t border-border/60 dark:border-border/10 my-3" />
 
               <div className="space-y-2.5 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Dose Base Price</span>
-                  <span className="font-medium">₹{selectedVaccine?.price.toLocaleString("en-IN")}</span>
-                </div>
+                {formData.vaccineId === "both" ? (
+                  <>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">ceravac-HPV Price</span>
+                      <span className="font-medium">₹1,300</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Revac-B+ Price</span>
+                      <span className="font-medium">₹75</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Dose Base Price</span>
+                    <span className="font-medium">₹{selectedVaccine?.price.toLocaleString("en-IN")}</span>
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Admin Fee</span>
                   <span className="font-medium text-success">Free</span>
@@ -512,16 +496,6 @@ export const VaccinationRegistrationPage = () => {
                   <span>₹{selectedVaccine?.price.toLocaleString("en-IN")}</span>
                 </div>
               </div>
-
-              {formData.appointmentDate && (
-                <div className="p-3 bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/10 text-xs text-primary font-medium flex gap-2">
-                  <Calendar className="h-4 w-4 shrink-0" />
-                  <div>
-                    <div>Date: {formData.appointmentDate}</div>
-                    <div>Slot: {formData.appointmentSlot}</div>
-                  </div>
-                </div>
-              )}
             </Card>
           </div>
         )}

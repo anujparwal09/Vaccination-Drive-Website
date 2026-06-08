@@ -115,8 +115,9 @@ app.use("/api/admin", adminRoutes);
 
 // Vaccine metadata configs
 const VACCINES = [
-  { id: "ceravac-hpv", name: "ceravac-HPV", price: 1800 },
-  { id: "revac-b-hbv", name: "Revac-B+ -HBV vaccine", price: 75 }
+  { id: "ceravac-hpv", name: "ceravac-HPV", price: 1300 },
+  { id: "revac-b-hbv", name: "Revac-B+ -HBV vaccine", price: 75 },
+  { id: "both", name: "ceravac-HPV & Revac-B+ -HBV vaccine", price: 1375 }
 ];
 
 app.get("/api/config", (req, res) => {

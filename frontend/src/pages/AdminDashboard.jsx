@@ -514,7 +514,7 @@ export const AdminDashboard = () => {
                           </td>
                           <td className="px-6 py-4 text-left whitespace-nowrap">
                             <div className="font-semibold text-slate-800 dark:text-slate-200">{r.vaccineName}</div>
-                            <div className="text-[10px] text-slate-400 font-medium">{r.dose} | {r.appointmentDate || "No date"}</div>
+                            <div className="text-[10px] text-slate-400 font-medium">{r.dose} | {r.appointmentDate || "Dates TBD"}</div>
                           </td>
                           <td className="px-6 py-4 text-center whitespace-nowrap">
                             <div className="font-bold text-slate-900 dark:text-white">Rs. {Number(r.paymentAmount || 0).toLocaleString("en-IN")}</div>
@@ -684,7 +684,7 @@ export const AdminDashboard = () => {
                                   <tr key={item.id}>
                                     <td className="px-5 py-4 whitespace-nowrap">
                                       <div className="font-bold text-slate-900 dark:text-white">{item.id}</div>
-                                      <div className="text-[10px] text-muted-foreground">{item.appointmentDate || "No appointment date"}</div>
+                                      <div className="text-[10px] text-muted-foreground">{item.appointmentDate || "Dates TBD"}</div>
                                     </td>
                                     <td className="px-5 py-4 whitespace-nowrap">
                                       <div className="font-semibold">{item.vaccineName}</div>

@@ -104,8 +104,8 @@ export const ReceiptPage = () => {
           <div className="space-y-1.5 text-left sm:text-right">
             <h4 className="font-bold text-slate-400 uppercase text-xs tracking-wider">Drive Details</h4>
             <div className="font-semibold text-slate-900">{booking.batchName}</div>
-            <div className="text-slate-600">Appointment Date: {booking.appointmentDate}</div>
-            <div className="text-slate-600">Slot: {booking.appointmentSlot}</div>
+            <div className="text-slate-600">Appointment Date: {booking.appointmentDate || "Dates TBD"}</div>
+            <div className="text-slate-600">Slot: {booking.appointmentSlot || "Slots TBD"}</div>
           </div>
         </div>
 

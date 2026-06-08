@@ -125,13 +125,16 @@ export const UserDashboard = () => {
             </div>
             <div>
               <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Next Appointment</p>
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white mt-1">
+              <div className="mt-1">
                 {nextAppointment ? (
-                  `${nextAppointment.appointmentDate} (${nextAppointment.dose})`
+                  <>
+                    <div className="text-sm font-bold text-slate-900 dark:text-white truncate max-w-[200px]">{nextAppointment.vaccineName}</div>
+                    <div className="text-[11px] text-muted-foreground mt-0.5">{nextAppointment.dose} · Dates TBD</div>
+                  </>
                 ) : (
-                  "Not Scheduled"
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">No Active Bookings</h3>
                 )}
-              </h3>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -195,8 +198,8 @@ export const UserDashboard = () => {
                         </div>
                         <p className="text-xs text-muted-foreground">ID: {booking.id}</p>
                         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-medium text-slate-500 pt-1">
-                          <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {booking.appointmentDate}</span>
-                          <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {booking.appointmentSlot}</span>
+                          <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {booking.appointmentDate || "Dates TBD"}</span>
+                          <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {booking.appointmentSlot || "Slots TBD"}</span>
                         </div>
                         <div className="flex gap-2 pt-2">
                           <Badge variant={booking.paymentStatus === "Confirmed" ? "success" : "error"}>
@@ -331,7 +334,7 @@ export const UserDashboard = () => {
                   </div>
                   <div>
                     <span className="text-slate-500 uppercase text-[9px] tracking-wider font-semibold block">Booking Date</span>
-                    <span className="font-bold text-slate-200">{selectedPass.appointmentDate}</span>
+                    <span className="font-bold text-slate-200">{selectedPass.appointmentDate || "Dates TBD"}</span>
                   </div>
                 </div>
 
