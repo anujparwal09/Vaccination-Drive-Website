@@ -9,11 +9,11 @@ router.use(authenticateUser, authorizeRoles("admin", "staff"));
 
 // @route GET /api/admin/stats
 // @desc Get dashboard statistics
-router.get("/stats", (req, res) => {
+router.get("/stats", async (req, res) => {
   try {
-    const users = readJsonFile("users.json");
-    const registrations = readJsonFile("registrations.json");
-    const payments = readJsonFile("payments.json");
+    const users = await readJsonFile("users.json");
+    const registrations = await readJsonFile("registrations.json");
+    const payments = await readJsonFile("payments.json");
 
     const totalRevenue = payments
       .filter((payment) => payment.approvalStatus === "Approved" || payment.status === "Approved")
@@ -33,9 +33,9 @@ router.get("/stats", (req, res) => {
 
 // @route GET /api/admin/users
 // @desc Get all users
-router.get("/users", (req, res) => {
+router.get("/users", async (req, res) => {
   try {
-    const users = readJsonFile("users.json");
+    const users = await readJsonFile("users.json");
     // Remove passwords before sending to frontend
     const sanitizedUsers = users.map(u => {
       const { password, ...safeUser } = u;
@@ -49,9 +49,9 @@ router.get("/users", (req, res) => {
 
 // @route GET /api/admin/registrations
 // @desc Get all registrations
-router.get("/registrations", (req, res) => {
+router.get("/registrations", async (req, res) => {
   try {
-    const registrations = readJsonFile("registrations.json");
+    const registrations = await readJsonFile("registrations.json");
     res.json(registrations);
   } catch (error) {
     res.status(500).json({ error: "Failed to load registrations." });
@@ -60,9 +60,9 @@ router.get("/registrations", (req, res) => {
 
 // @route GET /api/admin/payments
 // @desc Get all payments
-router.get("/payments", (req, res) => {
+router.get("/payments", async (req, res) => {
   try {
-    const payments = readJsonFile("payments.json");
+    const payments = await readJsonFile("payments.json");
     res.json(payments);
   } catch (error) {
     res.status(500).json({ error: "Failed to load payments." });

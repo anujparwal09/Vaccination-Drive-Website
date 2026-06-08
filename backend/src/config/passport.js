@@ -1,6 +1,6 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const { readJsonFile, writeJsonFile } = require("../utils/jsonDb");
+const { readJson: readJsonFile, writeJson: writeJsonFile, appendJson } = require("../utils/jsonStorage");
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
@@ -23,7 +23,7 @@ if (isGoogleOAuthConfigured) {
             return done(new Error("Google account did not provide an email address."), null);
           }
 
-          const users = readJsonFile("users.json");
+          const users = await readJsonFile("users.json");
           let user = users.find((u) => u.googleId === profile.id);
 
           if (user) {
@@ -41,7 +41,7 @@ if (isGoogleOAuthConfigured) {
             user.updatedAt = new Date().toISOString();
 
             const updatedUsers = users.map((u) => (u.id === user.id ? user : u));
-            writeJsonFile("users.json", updatedUsers);
+            await writeJsonFile("users.json", updatedUsers, { logMessage: "Google Account Linked" });
             return done(null, user);
           }
 
@@ -66,8 +66,7 @@ if (isGoogleOAuthConfigured) {
             updatedAt: new Date().toISOString(),
           };
 
-          users.push(user);
-          writeJsonFile("users.json", users);
+          await appendJson("users.json", user, { logMessage: "Google User Registered" });
           return done(null, user);
         } catch (error) {
           return done(error, null);
@@ -83,9 +82,9 @@ passport.serializeUser((user, done) => {
   done(null, user.id);
 });
 
-passport.deserializeUser((id, done) => {
+passport.deserializeUser(async (id, done) => {
   try {
-    const users = readJsonFile("users.json");
+    const users = await readJsonFile("users.json");
     const user = users.find((u) => u.id === id);
     done(null, user || null);
   } catch (error) {

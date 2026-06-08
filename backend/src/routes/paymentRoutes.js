@@ -32,7 +32,7 @@ router.post("/create-order", authenticateUser, async (req, res) => {
   const { registrationId } = req.body;
 
   try {
-    const registrations = readJsonFile("registrations.json");
+    const registrations = await readJsonFile("registrations.json");
     const registrationIndex = registrations.findIndex(r => r.id === registrationId && r.userId === req.user.id);
     const registration = registrations[registrationIndex];
 
@@ -82,7 +82,7 @@ router.post("/create-order", authenticateUser, async (req, res) => {
       razorpayOrderStatus: order.status,
       updatedAt: new Date().toISOString(),
     };
-    writeJsonFile("registrations.json", registrations);
+    await writeJsonFile("registrations.json", registrations);
 
     res.json({
       ...order,
@@ -98,7 +98,7 @@ const verifyPaymentHandler = async (req, res) => {
   const { registrationId, razorpay_order_id, razorpay_payment_id, razorpay_signature, mock } = req.body;
 
   try {
-    const registrations = readJsonFile("registrations.json");
+    const registrations = await readJsonFile("registrations.json");
     const regIndex = registrations.findIndex(r => r.id === registrationId && r.userId === req.user.id);
 
     if (regIndex === -1) {
@@ -106,7 +106,7 @@ const verifyPaymentHandler = async (req, res) => {
     }
 
     const registration = registrations[regIndex];
-    const payments = readJsonFile("payments.json");
+    const payments = await readJsonFile("payments.json");
     const existingActivePayment = payments.find((payment) =>
       payment.registrationId === registration.id && payment.approvalStatus !== "Rejected"
     );
@@ -115,7 +115,7 @@ const verifyPaymentHandler = async (req, res) => {
       if (registration.paymentStatus === "Pending Admin Confirmation") {
         registration.paymentStatus = "Pending Admin Approval";
         registrations[regIndex] = registration;
-        writeJsonFile("registrations.json", registrations);
+        await writeJsonFile("registrations.json", registrations);
       }
       return res.json(buildPaymentVerificationResponse(registration, existingActivePayment));
     }
@@ -184,7 +184,7 @@ const verifyPaymentHandler = async (req, res) => {
       savedPayment = paymentPayload;
       payments.push(savedPayment);
     }
-    writeJsonFile("payments.json", payments);
+    await writeJsonFile("payments.json", payments);
 
     // Update Registration Status
     registration.status = "Payment Completed";
@@ -194,7 +194,7 @@ const verifyPaymentHandler = async (req, res) => {
     registration.paymentId = paymentId;
     registration.receiptUrl = "";
     registration.updatedAt = paidAt;
-    writeJsonFile("registrations.json", registrations);
+    await writeJsonFile("registrations.json", registrations);
 
     res.json({
       success: true,
@@ -220,10 +220,10 @@ router.post("/verify-payment", authenticateUser, verifyPaymentHandler);
 
 // @route GET /api/payments/receipt/:paymentId
 // @desc Download PDF Receipt
-router.get("/receipt/:paymentId", authenticateUser, (req, res) => {
+router.get("/receipt/:paymentId", authenticateUser, async (req, res) => {
   const { paymentId } = req.params;
   
-  const payments = readJsonFile("payments.json");
+  const payments = await readJsonFile("payments.json");
   const payment = payments.find(p => p.paymentId === paymentId);
 
   if (!payment) {

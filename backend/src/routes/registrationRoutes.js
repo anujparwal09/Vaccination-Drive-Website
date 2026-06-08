@@ -26,9 +26,9 @@ function normalizeRegistration(record) {
 
 // @route GET /api/registrations
 // @desc Get registrations visible to the current user
-router.get("/", authenticateUser, (req, res) => {
+router.get("/", authenticateUser, async (req, res) => {
   try {
-    const registrations = readJsonFile("registrations.json");
+    const registrations = await readJsonFile("registrations.json");
     const visibleRegistrations = ["admin", "staff"].includes(req.user.role)
       ? registrations
       : registrations.filter((r) => r.userId === req.user.id);
@@ -42,14 +42,14 @@ router.get("/", authenticateUser, (req, res) => {
 
 // @route POST /api/registrations
 // @desc Create a new vaccination registration
-router.post("/", authenticateUser, (req, res) => {
+router.post("/", authenticateUser, async (req, res) => {
   const { fullName, age, gender, phone, email, address, vaccineId, dose, appointmentDate, appointmentSlot } = req.body;
 
   const vaccine = VACCINES.find((v) => v.id === vaccineId);
   if (!vaccine) return res.status(400).json({ error: "Invalid vaccine selection." });
 
   try {
-    const registrations = readJsonFile("registrations.json");
+    const registrations = await readJsonFile("registrations.json");
     
     // Generate unique registration ID (e.g. REG-2026-0001)
     const currentYear = new Date().getFullYear();
@@ -87,7 +87,7 @@ router.post("/", authenticateUser, (req, res) => {
     };
 
     registrations.push(newRegistration);
-    writeJsonFile("registrations.json", registrations);
+    await writeJsonFile("registrations.json", registrations);
 
     res.status(201).json({
       message: "Vaccination registered successfully. Please proceed to payment.",
@@ -101,9 +101,9 @@ router.post("/", authenticateUser, (req, res) => {
 
 // @route GET /api/registrations/me
 // @desc Get current user's registrations
-router.get("/me", authenticateUser, (req, res) => {
+router.get("/me", authenticateUser, async (req, res) => {
   try {
-    const registrations = readJsonFile("registrations.json");
+    const registrations = await readJsonFile("registrations.json");
     const myRegistrations = registrations.filter((r) => r.userId === req.user.id);
     myRegistrations.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     

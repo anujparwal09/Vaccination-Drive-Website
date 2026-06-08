@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
-const { readJsonFile, writeJsonFile } = require("../utils/jsonDb");
+const { readJson: readJsonFile, writeJson: writeJsonFile } = require("../utils/jsonStorage");
 const { generateAccessToken, generateRefreshToken } = require("../utils/jwt");
 
 // Helper to set cookie
@@ -22,7 +22,7 @@ const register = async (req, res) => {
   }
 
   try {
-    const users = readJsonFile("users.json");
+    const users = await readJsonFile("users.json");
     
     // Check if user exists
     const userExists = users.some((u) => u.email.toLowerCase() === email.toLowerCase());
@@ -64,7 +64,7 @@ const register = async (req, res) => {
     user.refreshToken = refreshToken;
 
     users.push(user);
-    writeJsonFile("users.json", users);
+    await writeJsonFile("users.json", users, { logMessage: "User Registered" });
 
     // Set HTTP-Only Cookie
     setRefreshTokenCookie(res, refreshToken);
@@ -99,7 +99,7 @@ const login = async (req, res) => {
   }
 
   try {
-    const users = readJsonFile("users.json");
+    const users = await readJsonFile("users.json");
     const user = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
     
     if (!user) {
@@ -121,7 +121,7 @@ const login = async (req, res) => {
     user.updatedAt = new Date().toISOString();
     
     const updatedUsers = users.map((u) => (u.id === user.id ? user : u));
-    writeJsonFile("users.json", updatedUsers);
+    await writeJsonFile("users.json", updatedUsers, { logMessage: "User Session Updated" });
 
     // Set HTTP-Only Cookie
     setRefreshTokenCookie(res, refreshToken);
@@ -155,14 +155,14 @@ const logout = async (req, res) => {
   }
 
   try {
-    const users = readJsonFile("users.json");
+    const users = await readJsonFile("users.json");
     const user = users.find((u) => u.refreshToken === refreshToken);
     
     if (user) {
       user.refreshToken = "";
       user.updatedAt = new Date().toISOString();
       const updatedUsers = users.map((u) => (u.id === user.id ? user : u));
-      writeJsonFile("users.json", updatedUsers);
+      await writeJsonFile("users.json", updatedUsers, { logMessage: "User Logged Out" });
     }
 
     res.clearCookie("refreshToken");
@@ -182,7 +182,7 @@ const refreshToken = async (req, res) => {
   }
 
   try {
-    const users = readJsonFile("users.json");
+    const users = await readJsonFile("users.json");
     const user = users.find((u) => u.refreshToken === refreshToken);
     
     if (!user) {
@@ -208,7 +208,7 @@ const forgotPassword = async (req, res) => {
   }
 
   try {
-    const users = readJsonFile("users.json");
+    const users = await readJsonFile("users.json");
     const user = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
     
     // For security, do not disclose if email is in database
@@ -225,7 +225,7 @@ const forgotPassword = async (req, res) => {
     user.updatedAt = new Date().toISOString();
     
     const updatedUsers = users.map((u) => (u.id === user.id ? user : u));
-    writeJsonFile("users.json", updatedUsers);
+    await writeJsonFile("users.json", updatedUsers, { logMessage: "Password Reset Requested" });
 
     res.status(200).json({
       message: "If the email is registered, a password reset link has been sent."
@@ -245,7 +245,7 @@ const resetPassword = async (req, res) => {
   }
 
   try {
-    const users = readJsonFile("users.json");
+    const users = await readJsonFile("users.json");
     const user = users.find(
       (u) => u.resetPasswordToken === token && new Date(u.resetPasswordExpires) > new Date()
     );
@@ -262,7 +262,7 @@ const resetPassword = async (req, res) => {
     user.updatedAt = new Date().toISOString();
 
     const updatedUsers = users.map((u) => (u.id === user.id ? user : u));
-    writeJsonFile("users.json", updatedUsers);
+    await writeJsonFile("users.json", updatedUsers, { logMessage: "Password Reset Completed" });
 
     res.status(200).json({ message: "Password updated successfully. You can now login." });
   } catch (error) {
@@ -284,13 +284,13 @@ const googleAuthCallback = async (req, res) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    const users = readJsonFile("users.json");
+    const users = await readJsonFile("users.json");
     const dbUser = users.find((u) => u.id === user.id);
     if (dbUser) {
       dbUser.refreshToken = refreshToken;
       dbUser.updatedAt = new Date().toISOString();
       const updatedUsers = users.map((u) => (u.id === dbUser.id ? dbUser : u));
-      writeJsonFile("users.json", updatedUsers);
+      await writeJsonFile("users.json", updatedUsers, { logMessage: "Google Session Updated" });
     }
 
     // Set refresh token in cookies
@@ -332,7 +332,7 @@ const getMe = async (req, res) => {
 const updateProfile = async (req, res) => {
   const { fullName, phone, age, gender } = req.body;
   try {
-    const users = readJsonFile("users.json");
+    const users = await readJsonFile("users.json");
     const userIndex = users.findIndex((u) => u.id === req.user.id);
     if (userIndex === -1) {
       return res.status(404).json({ error: "User not found." });
@@ -344,7 +344,7 @@ const updateProfile = async (req, res) => {
     users[userIndex].gender = gender || users[userIndex].gender;
     users[userIndex].updatedAt = new Date().toISOString();
 
-    writeJsonFile("users.json", users);
+    await writeJsonFile("users.json", users, { logMessage: "User Profile Updated" });
 
     res.status(200).json({
       message: "Profile updated successfully.",

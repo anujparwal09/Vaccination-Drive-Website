@@ -30,7 +30,7 @@ initDbFiles();
 // Seed Default Admin User if not exists
 const seedAdmin = async () => {
   try {
-    const users = readJsonFile("users.json");
+    const users = await readJsonFile("users.json");
     const adminExists = users.some((u) => u.role === "admin");
     if (!adminExists) {
       if (!process.env.ADMIN_PASSWORD) {
@@ -61,7 +61,7 @@ const seedAdmin = async () => {
       };
       
       users.push(adminUser);
-      writeJsonFile("users.json", users);
+      await writeJsonFile("users.json", users);
       console.log("Seeded default admin user: admin@vaccinationdrive.org");
     }
   } catch (err) {
@@ -126,7 +126,7 @@ app.get("/api/config", (req, res) => {
 // Admin Panel endpoints
 app.post("/api/admin/registrations", authenticateUser, authorizeRoles("admin"), async (req, res) => {
   try {
-    const registrations = readJsonFile("registrations.json");
+    const registrations = await readJsonFile("registrations.json");
     registrations.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     res.json(registrations);
   } catch (error) {
@@ -136,7 +136,7 @@ app.post("/api/admin/registrations", authenticateUser, authorizeRoles("admin"), 
 
 app.post("/api/admin/confirm-payment/:id", authenticateUser, authorizeRoles("admin", "staff"), async (req, res) => {
   try {
-    const registrations = readJsonFile("registrations.json");
+    const registrations = await readJsonFile("registrations.json");
     const bookingIndex = registrations.findIndex((r) => r.id === req.params.id);
     
     if (bookingIndex === -1) {
@@ -146,16 +146,16 @@ app.post("/api/admin/confirm-payment/:id", authenticateUser, authorizeRoles("adm
     const approvedAt = new Date().toISOString();
     const registration = registrations[bookingIndex];
     
-    const payments = readJsonFile("payments.json");
+    const payments = await readJsonFile("payments.json");
     let paymentIndex = payments.findIndex((payment) => payment.registrationId === registration.id);
 
     if (registration.paymentStatus === "Confirmed" && paymentIndex >= 0 && payments[paymentIndex].approvalStatus === "Approved") {
       registration.receiptUrl = registration.receiptUrl || `/receipt/${registration.id}`;
       payments[paymentIndex].receiptUrl = payments[paymentIndex].receiptUrl || `/receipt/${registration.id}`;
-      writeJsonFile("payments.json", payments);
-      writeJsonFile("registrations.json", registrations);
+      await writeJsonFile("payments.json", payments);
+      await writeJsonFile("registrations.json", registrations);
 
-      const users = readJsonFile("users.json");
+      const users = await readJsonFile("users.json");
       const user = users.find((u) => u.id === registration.userId) || registration;
       const receipt = await generateReceipt(payments[paymentIndex], registration, user);
 
@@ -222,10 +222,10 @@ app.post("/api/admin/confirm-payment/:id", authenticateUser, authorizeRoles("adm
     registration.receiptUrl = `/receipt/${registration.id}`;
     registration.updatedAt = approvedAt;
 
-    writeJsonFile("payments.json", payments);
-    writeJsonFile("registrations.json", registrations);
+    await writeJsonFile("payments.json", payments);
+    await writeJsonFile("registrations.json", registrations);
 
-    const users = readJsonFile("users.json");
+    const users = await readJsonFile("users.json");
     const user = users.find((u) => u.id === registration.userId) || registration;
     const receipt = await generateReceipt(payments[paymentIndex], registration, user);
 
@@ -243,7 +243,7 @@ app.post("/api/admin/confirm-payment/:id", authenticateUser, authorizeRoles("adm
 
 const rejectPaymentHandler = async (req, res) => {
   try {
-    const registrations = readJsonFile("registrations.json");
+    const registrations = await readJsonFile("registrations.json");
     const bookingIndex = registrations.findIndex((r) => r.id === req.params.id);
     
     if (bookingIndex === -1) {
@@ -263,9 +263,9 @@ const rejectPaymentHandler = async (req, res) => {
     registration.paymentRejectedAt = rejectedAt;
     registration.updatedAt = rejectedAt;
     
-    writeJsonFile("registrations.json", registrations);
+    await writeJsonFile("registrations.json", registrations);
 
-    const payments = readJsonFile("payments.json");
+    const payments = await readJsonFile("payments.json");
     const paymentIndex = payments.findIndex((payment) => payment.registrationId === registration.id);
     if (paymentIndex >= 0) {
       payments[paymentIndex] = {
@@ -277,7 +277,7 @@ const rejectPaymentHandler = async (req, res) => {
         rejectedAt,
         rejectedBy: req.user.id,
       };
-      writeJsonFile("payments.json", payments);
+      await writeJsonFile("payments.json", payments);
     }
 
     res.json({ message: "Payment marked not approved.", registration });
@@ -293,7 +293,7 @@ app.post("/api/admin/refund-payment/:id", authenticateUser, authorizeRoles("admi
 // Staff/Admin verify pass scan
 app.post("/api/verify/:id", authenticateUser, authorizeRoles("admin", "staff"), async (req, res) => {
   try {
-    const registrations = readJsonFile("registrations.json");
+    const registrations = await readJsonFile("registrations.json");
     const bookingIndex = registrations.findIndex((r) => r.id === req.params.id);
     
     if (bookingIndex === -1) {
@@ -308,17 +308,17 @@ app.post("/api/verify/:id", authenticateUser, authorizeRoles("admin", "staff"), 
     registrations[bookingIndex].verifiedAt = new Date().toISOString();
     registrations[bookingIndex].updatedAt = new Date().toISOString();
     
-    writeJsonFile("registrations.json", registrations);
+    await writeJsonFile("registrations.json", registrations);
 
     // Save logs in verifications.json
-    const verifications = readJsonFile("verifications.json");
+    const verifications = await readJsonFile("verifications.json");
     verifications.push({
       id: "VER" + Math.floor(1000 + Math.random() * 9000),
       bookingId: req.params.id,
       verifiedBy: req.user.id,
       verifiedAt: new Date().toISOString()
     });
-    writeJsonFile("verifications.json", verifications);
+    await writeJsonFile("verifications.json", verifications);
 
     res.json({ message: "Participant verified successfully.", registration: registrations[bookingIndex] });
   } catch (error) {
@@ -329,8 +329,8 @@ app.post("/api/verify/:id", authenticateUser, authorizeRoles("admin", "staff"), 
 // Admin export excel report
 app.post("/api/admin/excel", authenticateUser, authorizeRoles("admin"), async (req, res) => {
   try {
-    const registrations = readJsonFile("registrations.json");
-    const users = readJsonFile("users.json");
+    const registrations = await readJsonFile("registrations.json");
+    const users = await readJsonFile("users.json");
     const internalRoles = new Set(["admin", "staff"]);
     const usersById = new Map(users.map((user) => [user.id, user]));
     const internalEmails = new Set(
@@ -494,8 +494,8 @@ app.post("/api/admin/excel", authenticateUser, authorizeRoles("admin"), async (r
 // Admin export users report
 app.post("/api/admin/users/excel", authenticateUser, authorizeRoles("admin"), async (req, res) => {
   try {
-    const users = readJsonFile("users.json");
-    const registrations = readJsonFile("registrations.json");
+    const users = await readJsonFile("users.json");
+    const registrations = await readJsonFile("registrations.json");
 
     const formatDateTime = (value) => {
       if (!value) return "";

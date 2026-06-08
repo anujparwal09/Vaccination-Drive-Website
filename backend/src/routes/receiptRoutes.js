@@ -12,9 +12,9 @@ router.get("/:registrationId", authenticateUser, async (req, res) => {
   const { registrationId } = req.params;
 
   try {
-    const registrations = readJsonFile("registrations.json");
-    const payments = readJsonFile("payments.json");
-    const users = readJsonFile("users.json");
+    const registrations = await readJsonFile("registrations.json");
+    const payments = await readJsonFile("payments.json");
+    const users = await readJsonFile("users.json");
 
     const registration = registrations.find((record) => record.id === registrationId);
     if (!registration) {

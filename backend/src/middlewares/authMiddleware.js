@@ -19,7 +19,7 @@ const authenticateUser = async (req, res, next) => {
     const decoded = jwt.verify(token, getRequiredEnv("JWT_SECRET"));
     
     // Find user from local users.json file database
-    const users = readJsonFile("users.json");
+    const users = await readJsonFile("users.json");
     const user = users.find((u) => u.id === decoded.id);
     
     if (!user) {
