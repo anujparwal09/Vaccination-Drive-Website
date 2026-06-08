@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from "react"
+import { Fragment, useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import { ShieldCheck, Sparkles, CheckCircle, CheckCircle2, ChevronRight } from "lucide-react"
@@ -10,7 +10,7 @@ import { Input, Select } from "@/components/ui/Input"
 
 export const RegisterPage = () => {
   const navigate = useNavigate()
-  const { registerUser } = useAuth()
+  const { registerUser, loginWithGoogle, handleGoogleCallback } = useAuth()
   const { showToast } = useToast()
 
   const [step, setStep] = useState(1)
@@ -30,6 +30,33 @@ export const RegisterPage = () => {
   })
 
   const [avatarOptions, setAvatarOptions] = useState([])
+  const hasProcessedCode = useRef(false)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const code = params.get("code")
+    if (code && !hasProcessedCode.current) {
+      hasProcessedCode.current = true
+      setLoading(true)
+      handleGoogleCallback(code)
+        .then((user) => {
+          showToast(`Welcome back, ${user.fullName}! Authenticated via Google.`, "success")
+          // Clear query params
+          navigate(window.location.pathname, { replace: true })
+          if (user.role === "admin") {
+            navigate("/admin")
+          } else {
+            navigate("/dashboard")
+          }
+        })
+        .catch((err) => {
+          showToast(err.response?.data?.error || "Google authentication failed. Please try again.", "error")
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+    }
+  }, [handleGoogleCallback, navigate, showToast])
 
   const getAvatarsForGender = (gender) => {
     const maleSeeds = ["Oliver", "Jack", "Harry", "Thomas", "George", "James", "Noah", "Leo", "Oscar", "Mason", "Ethan", "William", "Lucas", "Henry", "Alexander"];
@@ -262,6 +289,43 @@ export const RegisterPage = () => {
                   />
                   <Button variant="primary" onClick={nextStep} className="w-full gap-2 mt-4">
                     Continue Details <ChevronRight className="h-4.5 w-4.5" />
+                  </Button>
+
+                  <div className="relative my-4">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-border/80" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-card px-3 text-muted-foreground font-semibold">Or register via</span>
+                    </div>
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    type="button"
+                    onClick={loginWithGoogle}
+                    disabled={loading}
+                    className="w-full h-11 border border-border font-medium hover:bg-muted/40 rounded-xl gap-2.5"
+                  >
+                    <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24">
+                      <path
+                        fill="#4285F4"
+                        d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v3.92h6.69a5.74 5.74 0 0 1-2.49 3.77v3.1h3.99c2.34-2.16 3.69-5.35 3.69-8.72z"
+                      />
+                      <path
+                        fill="#34A853"
+                        d="M12 24c3.24 0 5.97-1.08 7.96-2.91l-3.99-3.1c-1.1.74-2.51 1.18-3.97 1.18-3.05 0-5.63-2.06-6.55-4.83H1.377v3.2A11.99 11.99 0 0 0 12 24z"
+                      />
+                      <path
+                        fill="#FBBC05"
+                        d="M5.45 14.34a7.16 7.16 0 0 1 0-4.68V6.46H1.377a11.99 11.99 0 0 0 0 11.08l4.073-3.2z"
+                      />
+                      <path
+                        fill="#EA4335"
+                        d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0A11.99 11.99 0 0 0 1.377 6.46L5.45 9.66c.92-2.77 3.5-4.83 6.55-4.83z"
+                      />
+                    </svg>
+                    Continue with Google
                   </Button>
                 </motion.div>
               )}
