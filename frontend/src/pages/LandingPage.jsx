@@ -321,7 +321,7 @@ export const LandingPage = () => {
                 <div className="pl-4 border-l-4 border-[#F59E0B]">
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">HPV Vaccine</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    Recommended for adolescents and young adults to prevent HPV-linked cancers. Single dose (₹1,300).
+                    Recommended for adolescents and young adults to prevent HPV-linked cancers. Single dose (₹1,800).
                   </p>
                 </div>
               </div>
