@@ -233,6 +233,15 @@ export const Navbar = () => {
             >
               Home
             </Link>
+            {!currentUser && (
+              <Link
+                to="/admin-login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg"
+              >
+                Admin Login
+              </Link>
+            )}
             {currentUser && (
               <>
                 <Link
